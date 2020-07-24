@@ -12,7 +12,8 @@ mongoose
   .connect(MONGODB_URI, {
     useCreateIndex: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
   .then(self => {
     console.log(`Connected to the database: "${self.connection.name}"`);
@@ -21,6 +22,35 @@ mongoose
   })
   .then(() => {
     // Run your code here, after you have insured that the connection was made
+    return Recipe.create({
+      title: 'Coconut Jollof Rice',
+      level: 'Amateur Chef',
+      ingredients: ['rice', 'tomatoes', 'onions', 'peppers', 'salt', 'oil', 'coconut'],
+      cuisine: 'african',
+      dishType: 'main_course',
+      image: '/images/Coconut-Jollof-rice.jpg',
+      duration: 60,
+      creator: 'Diana Odiaka',
+      created: new Date(2020, 06, 22)
+    });
+  })
+  .then(recipes => {
+    return Recipe.insertMany(data);
+  })
+  .then(recipes => {
+    console.log('Many recipes inserted', data);
+    return Recipe.findOneAndUpdate(
+      { title: 'Rigatoni alla Genovese' },
+      { duration: 100 },
+      { new: true }
+    );
+  })
+  .then(data => {
+    console.log('succesfully updated duration', data);
+    return Recipe.deleteOne({ title: 'Carrot Cake' }, { new: true });
+  })
+  .then(data => {
+    console.log('Carrot cake was succefully deleted', data);
   })
   .catch(error => {
     console.error('Error connecting to the database', error);
